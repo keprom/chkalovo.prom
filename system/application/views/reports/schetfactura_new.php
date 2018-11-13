@@ -250,7 +250,7 @@ foreach($s as $s2 ):
  <FONT size=7>
  <table width="100%">
  <tr>
- <td align="left"><b>Директордың м.а. <br/>И.о. директора <?php  echo trim($org->director); ?></b></td>
+ <td align="left"><b>Директорд<br/>Директора <?php  echo trim($org->director); ?></b></td>
  <td></td>
  <td align="right"><b>БЕРДІ (жеткізушінің жауапты тұлғасы)<br/>ВЫДАЛ (ответственное лицо поставщика) </b></td>
   </tr>
