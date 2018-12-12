@@ -7,12 +7,12 @@ class Billing extends Controller
 	}
 	function datetostring($date)
 	{
-		$d=explode("-",$date); 
+		$d=explode("-",$date);
 		return $d['2'].'.'.$d['1'].'.'.$d['0'];
 	}
 	function shortdate($date)
 	{
-		$d=explode("-",$date); 
+		$d=explode("-",$date);
 		return $d['1'].'.'.substr($d['0'],2,2);
 	}
 	function f_d_graph($var)
@@ -22,12 +22,12 @@ class Billing extends Controller
 	}
 	function d2($date)
 	{
-		$d=explode("-",$date); 
+		$d=explode("-",$date);
 		return $d['2'].'.'.$d['1'].'.'.substr($d['0'],2,2);
 	}
 	function execute($function)
 	{
-		if (($this->session->userdata('billing/'.$function)=='t') or 
+		if (($this->session->userdata('billing/'.$function)=='t') or
 		($this->session->userdata('login')=='programmist') or ($this->session->userdata('login')=='admin'))
 			eval('$this->'.$function.'();');
 	}
@@ -85,20 +85,20 @@ class Billing extends Controller
 				redirect("billing");
 				die('<h1>Доступ запрещен</h1>');
 			}
-		}	
+		}
 	}
 	function left()
 	{
 		#added
 		$data['month_to_look'] = $this->db->query("select * from industry.current_period()")->row()->current_period;
-		#end of added	
+		#end of added
 		$data['poisk']=$this->session->userdata('poisk');
 		if ($this->session->userdata('poisk')==NULL) $data['poisk']='1';
 		$this->load->view("left",$data);
-		$this->load->view("messages");		
+		$this->load->view("messages");
 	}
 	function phpinfo()
-	{ 
+	{
 		echo phpinfo();
 	}
 
@@ -119,7 +119,7 @@ class Billing extends Controller
 		$this->load->view("billing_view",$data);
 		$this->load->view("right");
 	}
-	
+
 	function my_firm_not_closed()
 	{
 		$this->left();
@@ -147,7 +147,7 @@ class Billing extends Controller
 	{
 		$this->db->where('id',$this->uri->segment(3));
 		$data['r']=$this->db->get('industry.firm_view')->row();
-		 
+
 		$sql = "SELECT period.*,case when sprav.value is not null then 'selected' else '' end  as checked FROM industry.period left join industry.sprav on period.id=sprav.value::integer and sprav.name='current_period' order by id";
 		$data['period']=$this->db->query($sql);
 		$sql="Select industry.is_closed(".$this->uri->segment(3).") as closed";
@@ -159,14 +159,14 @@ class Billing extends Controller
 	}
 	function firm_edit()
 	{
-		$sql = "SELECT firm.id,firm.dogovor,firm.address, firm.name,  firm.telefon, firm.rnn, firm.dogovor_date,firm.nomer1c FROM industry.firm WHERE  firm.id=".$this->uri->segment(3); 
+		$sql = "SELECT firm.id,firm.dogovor,firm.address, firm.name,  firm.telefon, firm.rnn, firm.dogovor_date,firm.nomer1c FROM industry.firm WHERE  firm.id=".$this->uri->segment(3);
 		$this->db->where('id',$this->uri->segment(3));
 		$data['r']=$this->db->get('industry.firm');
-		 
+
 		$sql = "SELECT period.*,case when sprav.value is not null then 'selected' else '' end  as checked FROM industry.period left join industry.sprav on period.id=sprav.value::integer and sprav.name='current_period' order by id";
 		$data['period']=$this->db->query($sql);
 		$this->db->order_by('name');
-		
+
 		$data['firm_subgroup']=$this->db->get('industry.firm_subgroup');
 		$this->db->order_by('name');
 		$data['bank']=$this->db->get('industry.bank');
@@ -182,7 +182,7 @@ class Billing extends Controller
 		$this->load->view("firm_edit",$data);
 		$this->load->view("right");
 	}
-	
+
 	function firm_edition()
 	{
 	/*
@@ -201,7 +201,7 @@ class Billing extends Controller
 		$this->db->update('industry.firm',$_POST);
 		redirect("billing/firm/".$this->uri->segment(3));
 	}
-	
+
 	function close_firm()
 	{
 		$sql="SELECT industry.close_firm(".$this->uri->segment(3).")";
@@ -211,7 +211,7 @@ class Billing extends Controller
 	function full_close_firm()
 	{
 		$s="";
-		if (strlen(trim($_POST['vremenno']))==0){$s="1";}else{$s="2";} 
+		if (strlen(trim($_POST['vremenno']))==0){$s="1";}else{$s="2";}
 		$sql="update industry.firm set firm_closed= not firm_closed, close_type = ".$s." where id =".$this->uri->segment(3);
 		$this->db->query($sql);
 		redirect("billing/firm/".$this->uri->segment(3));
@@ -223,7 +223,7 @@ class Billing extends Controller
 		redirect("billing/firm/".$this->uri->segment(3));
 	}
 	function add_firm()
-	{		
+	{
 		$data['banks']=$this->db->get('industry.bank');
 		$data['subgroups']=$this->db->get('industry.firm_subgroup');
 		$this->left();
@@ -242,7 +242,7 @@ class Billing extends Controller
 
 	function firm_search_by()
 	{
-		$sql="select distinct firm_id from industry.billing_point_ex where ";	
+		$sql="select distinct firm_id from industry.billing_point_ex where ";
 		if ($_POST['type']!='1') $sql="select  * from industry.firm_overview where firm_id in ( ".$sql;
 		$str=$_POST['str'];
 		$this->session->set_userdata(array('poisk'=>$_POST['type']));
@@ -260,7 +260,7 @@ class Billing extends Controller
 			}
 		}
 		else
-		{									
+		{
 			$arr=explode(" ",$str);
 			$first=true;
 			if ($_POST['type']==2) {$t="billing_point_address";}
@@ -268,10 +268,10 @@ class Billing extends Controller
 			if ($_POST['type']==4) {$t="rnn";}
 			if ($_POST['type']==5) {$t="tp_name";}
 			if ($_POST['type']==6) {$t="telefon";}
-			if ($_POST['type']==7) {$t="firm_name";}		
-			if ($_POST['type']==8) {$t="billing_point_name";}		
-			if ($_POST['type']==9) {$t="gos_nomer";}	
-           	// if ($_POST['type']==10) {$t="firm_bin";}				
+			if ($_POST['type']==7) {$t="firm_name";}
+			if ($_POST['type']==8) {$t="billing_point_name";}
+			if ($_POST['type']==9) {$t="gos_nomer";}
+           	// if ($_POST['type']==10) {$t="firm_bin";}
 			if ($_POST['type']==10) {$t="bin";}
 			foreach ($arr as $a)
 			{
@@ -304,7 +304,7 @@ class Billing extends Controller
 		$this->db->order_by("name");
 		$data['query']=$this->db->get("common_info.street");
 		$this->left();
-		$this->load->view("sprav/streets_view",$data);	
+		$this->load->view("sprav/streets_view",$data);
 		$this->load->view("right");
 	}
 	function adding_streets()
@@ -318,8 +318,8 @@ class Billing extends Controller
 		$this->db->order_by("name");
 		$data['query']=$this->db->get("industry.counter_type");
 		$this->left();
-		$this->load->view("sprav/counter_types_view",$data);	
-		$this->load->view("right");	
+		$this->load->view("sprav/counter_types_view",$data);
+		$this->load->view("right");
 	}
 	function adding_counter_types()
 	{
@@ -332,9 +332,9 @@ class Billing extends Controller
 		$this->db->order_by("name");
 		$data['query']=$this->db->get("industry.tp");
 		$this->left();
-		$this->load->view("sprav/tp_view",$data);	
+		$this->load->view("sprav/tp_view",$data);
 		$this->load->view("right");
-		
+
 	}
 	function edit_tp()
 	{
@@ -343,9 +343,9 @@ class Billing extends Controller
 		$data['query']=$this->db->get("industry.tp")->row();
 		$data['ture']=$this->db->get("industry.ture");
 		$this->left();
-		$this->load->view("sprav/tp_edit",$data);	
+		$this->load->view("sprav/tp_edit",$data);
 		$this->load->view("right");
-		
+
 	}
 	function edition_tp()
 	{
@@ -368,9 +368,9 @@ class Billing extends Controller
 		$this->db->order_by("name");
 		$data['query']=$this->db->get("industry.bank");
 		$this->left();
-		$this->load->view("sprav/banks_view",$data);	
+		$this->load->view("sprav/banks_view",$data);
 		$this->load->view("right");
-		
+
 	}
 	function bank_edit()
 	{
@@ -404,9 +404,9 @@ class Billing extends Controller
 		}
 		else
 		{
-			echo "Нету точек учета <br><br>";		
-		}	
-		$this->execute("add_point");		
+			echo "Нету точек учета <br><br>";
+		}
+		$this->execute("add_point");
 	}
 	function add_point()
 	{
@@ -443,7 +443,7 @@ class Billing extends Controller
 		$sql="select * from industry.counter where data_start is null  and  point_id=".$this->uri->segment(3);
 		$query=$this->db->query($sql);
 		$this->left();
-		
+
 		if ($query->num_rows()>0) $data['snyat']='yes'; else $data['snyat']='false';
 		$this->load->view("counters_view",$data);
 		if ($data['snyat']=="false")
@@ -480,7 +480,7 @@ class Billing extends Controller
 		unset($_POST['day']);
 		unset($_POST['month']);
 		$this->db->insert("industry.counter",$_POST);
-		redirect("billing/point/".$_POST['point_id']);		
+		redirect("billing/point/".$_POST['point_id']);
 	}
 	function counter()
 	{
@@ -489,7 +489,7 @@ class Billing extends Controller
 		$data['counter_id']=$this->uri->segment(3);
 		$this->left();
 		$this->load->view("counter_view",$data);
-		$this->load->view("right");		
+		$this->load->view("right");
 	}
 	function delete_values_set()
 	{
@@ -505,7 +505,7 @@ class Billing extends Controller
 		$data['counter_type']=$this->db->get('industry.counter_type');
 		$this->left();
 		$this->load->view("counter_edit",$data);
-		$this->load->view("right");			
+		$this->load->view("right");
 	}
 	function changing_counter()
 	{
@@ -518,7 +518,7 @@ class Billing extends Controller
 	{
 		$sql="select * from industry.counter where data_finish is null and id=".$this->uri->segment(3);
 		$query=$this->db->query($sql);
-		if ($query->num_rows()==0)  
+		if ($query->num_rows()==0)
 		{
 			echo $this->red("billing/counter/".$this->uri->segment(3));
 			return;
@@ -552,7 +552,7 @@ class Billing extends Controller
 		$data['sets_type']=$this->db->query($sql)->row()->name;
 		$sql="SELECT * from industry.counter_value where values_set_id=".$this->uri->segment(3)."  order by data";
 		$data['query']=$this->db->query($sql);
-		$this->load->view("values_sets_view",$data);		
+		$this->load->view("values_sets_view",$data);
 		$this->execute("add_pokazanie");
 		$this->execute("nadbavka_ab");
 		$this->execute("akt");
@@ -565,21 +565,21 @@ class Billing extends Controller
 		$query=$this->db->query($sql);
 		if ($query->num_rows()==0)  return;
 		$data['set_id']=$this->uri->segment(3);
-		$this->load->view("add_pokazanie_view",$data);	
+		$this->load->view("add_pokazanie_view",$data);
 	}
 	function adding_pokazanie()
 	{
 		$this->session->set_userdata(array('day'=>$_POST['day'],'month'=>$_POST['month'],'year'=>$_POST['year']));
 		$data=$_POST['year']."-".$_POST['month']."-".$_POST['day'];
-		if (!checkdate($_POST['month'],$_POST['day'],$_POST['year'])) 
+		if (!checkdate($_POST['month'],$_POST['day'],$_POST['year']))
 		{
 			echo  $this->red("billing/values_sets/".$_POST['set_id']);
 			return;
-		}		
+		}
 		$_POST['data']=date("Y-m-d", mktime(0,0,0,$_POST['month'],$_POST['day'],$_POST['year']));
 		unset($_POST['year']);
 		unset($_POST['day']);
-		unset($_POST['month']);	
+		unset($_POST['month']);
 		$_POST['uroven'] = 0;
 		$this->db->insert("industry.counter_value",$_POST);
 		redirect("billing/values_sets/".$_POST['values_set_id']);
@@ -632,9 +632,9 @@ class Billing extends Controller
 		$this->db->insert("industry.nadbavka_absolutnaya",$_POST);
 		redirect("billing/values_sets/".$_POST['values_set_id']);
 	}
-	
+
 	function sovm_otn()
-	{	
+	{
 		$sql="SELECT * FROM industry.sovm_uchet where child_point_id=".$this->uri->segment(3);
 		$data['query']=$this->db->query($sql);
 		$data['point_id']=$this->uri->segment(3);
@@ -661,7 +661,7 @@ class Billing extends Controller
 		redirect("billing/point/".$id);
 	}
 	function sovm_ab()
-	{	
+	{
 		$sql="SELECT * FROM industry.sovm_ab where values_set_id=".$this->uri->segment(3);
 		$data['query']=$this->db->query($sql);
 		$data['point_id']=$this->uri->segment(3);
@@ -731,16 +731,16 @@ class Billing extends Controller
 	function vedomost()
 	{
 		$this->load->library("pdf/pdf");
-		
+
 		$this->pdf->SetSubject('TCPDF Tutorial');
         $this->pdf->SetKeywords('TCPDF, PDF, example, test, guide');
         $this->pdf->SetAutoPageBreak(TRUE);
         // set font
         $this->pdf->SetFont('dejavusans', '', 9);
-        
+
         // add a page
         $this->pdf->AddPage('L');
-		
+
 		$sql="SELECT * FROM industry.firm WHERE id=".$_POST['firm_id'];
 		$data['firm']=$this->db->query($sql)->row();
 		$sql="SELECT * FROM industry.vedomost WHERE firm_id=".$_POST['firm_id']." and period_id=".$_POST['period_id'];
@@ -752,14 +752,14 @@ class Billing extends Controller
 		{
 			$data['oplata_value']=	$this->db->query($sql)->row()->oplata_value;
 		}
-		else 
+		else
 			$data['oplata_value']=0;
 		$string=$this->load->view("reports/vedomost",$data,TRUE);
 		$this->pdf->writeHTML($string);
-        
+
         //Close and output PDF document
-        $this->pdf->Output('example_001.pdf', 'I'); 
-		
+        $this->pdf->Output('example_001.pdf', 'I');
+
 	}
 	function pre_akt_sverki()
 	{
@@ -795,7 +795,7 @@ class Billing extends Controller
 		$data['nalog']=$this->db->query($sql);
 		$this->load->view('reports/report_to_nalogovaya',$data);
 	}
-	
+
 		function report_to_nalogovaya_alt()
 	{
 		//$sql="select * from industry.report_to_nalogovaya where period_id>=59 and  period_id <=61";
@@ -819,13 +819,13 @@ class Billing extends Controller
 		$data['period_id']=$_POST['period_id'];
 		$this->db->where('period_id',$_POST['period_id']);
 		$this->db->where('firm_id',$_POST['firm_id']);
-		$data['r']= $this->db->get('industry.schetfactura_date');	
+		$data['r']= $this->db->get('industry.schetfactura_date');
 		$this->db->where('id',$_POST["firm_id"]);
 		$data['firm']=$this->db->get('industry.firm')->row();
 		$this->left();
 		$this->load->view("pre_schetfactura2",$data);
 		$this->load->view("right");
-	}	
+	}
 	function schetfactura()
 	{
 		if (isset($_POST['akt_vypolnenyh_rabot']))
@@ -846,7 +846,7 @@ class Billing extends Controller
 				'edit6'=>$_POST['edit6']
 			)
 		);
-		
+
 		#FINE
 		$this->db->where('period_id', $_POST['period_id']);
 		$this->db->where('firm_id', $_POST['firm_id']);
@@ -857,30 +857,30 @@ class Billing extends Controller
 			$data['fine_value'] = $this->db->get("industry.fine_source_data")->row()->fine_value;
 		}
 		#END FINE
-		
+
 		$this->db->where('period_id',$_POST['period_id']);
 		$this->db->where('firm_id',$_POST['firm_id']);
 		$this->db->update('industry.schetfactura_date',
 			array(
-			
+
 			'schet2'=>$_POST['schet2'],
 			'data_schet'=>$_POST['data_schet']
-			
+
 			)
 		);
 		$this->load->plugin('chislo');
-		
+
 		//$dt_zp="select * from industry.period where id=".$_POST['period_id'];
 		//$data['dtqr']=$this->db->query($dt_zp)->result();
-		
+
 		$sql="SELECT * FROM industry.org_info";
 		$data['org']=$this->db->query($sql)->row();
 		$sql="select * from industry.schetfactura where tariff_value<>0 and firm_id=".$_POST['firm_id'].' and period_id='.$_POST['period_id'];
 		$data['s']=$this->db->query($sql)->result();
-		
+
 		$dt_zp="select * from industry.period where id=".$_POST['period_id']."";
 		$data['dtqr']=$this->db->query($dt_zp)->result();
-		
+
 		$this->db->where('firm_id',$_POST['firm_id']);
 		$this->db->where('period_id',$_POST['period_id']);
 		$data['schetfactura_date']=$this->db->get('industry.schetfactura_date')->row();
@@ -896,19 +896,19 @@ class Billing extends Controller
 		$data['schet2']=$_POST['schet2'];
 		$data['schet_nakl']=$_POST['schet_nakl'];
 		$data['data_nakl']=$_POST['data_nakl'];
-		
+
 		$this->db->where('id',$_POST['period_id']);
 		$data['period']=$this->db->get('industry.period')->row();
 		$this->db->where('id',$data['firm']->bank_id);
 		$data['bank']=$this->db->get('industry.bank')->row();
-		
+
 		$this->db->where('period_id',$_POST['period_id']);
 		$this->db->where('firm_id',$_POST['firm_id']);
 		$data['itog']=$this->db->get("industry.vedomost_itog")->row();
-		
+
 		if (!isset($_POST['html']))
 		{
-			
+
 		if (isset($_POST['new_schetfactura'])) {
 			$string = $this->load->view("reports/schetfactura_new",$data,TRUE);
 
@@ -928,15 +928,15 @@ class Billing extends Controller
 
 			//Close and output PDF document
 			$this->pdf->Output('example_001.pdf', 'I'); }
-		
+
 		if (isset($_POST['nakladnaya']))
 		$this->load->view("reports/nakladnaya",$data );
-			
+
 			if (isset($_POST['akt_vypolnenyh_rabot']))
 		{
 		$this->load->view("reports/avp2",$data);
-		
-		} 
+
+		}
 		}
 		else {
 		$string=$this->load->view("reports/schetfactura",$data,TRUE);
@@ -958,7 +958,7 @@ class Billing extends Controller
 			//Close and output PDF document
 			$this->pdf->Output('example_001.pdf', 'I');
 		}
-			
+
 	}
 
     function isRussian($text)
@@ -1140,7 +1140,7 @@ class Billing extends Controller
 		$sql="select distinct value as tariff_value from industry.tariff_value ";
 		$data['tariffs']=$this->db->query($sql);
 
-		
+
 		$this->left();
 		$this->load->view("pre_schetoplata2",$data);
 		$this->load->view("right");
@@ -1187,12 +1187,12 @@ class Billing extends Controller
 		$this->db->where('id',$_POST['period_id']);
 		$data['period']=$this->db->get('industry.period')->row();
 		$data['dogovor'] = $_POST['dogovor'];
-		
+
 		$this->db->where('id',$data['firm']->bank_id);
 		$data['bank']=$this->db->get("industry.bank")->row();
 		$data['schet']=!isset($_POST['schet'])?" ОПЛАТА":"-ФАКТУРА";
-		
-		
+
+
 		if ($_POST['type']=="by_tenge")
 		{
 			$tariff_value=$_POST['tariff_value'];
@@ -1202,18 +1202,18 @@ class Billing extends Controller
 			{
 				if ($tariff_value[$j]>0)
 						$buf[$j]=$tariff_kvt[$j] / $tariff_value[$j]/((100+$data['period']->nds)/100);
-					else 
+					else
 					$buf[$j]=$tariff_kvt[$j];
 			}
 			$data['tariff_kvt']=$buf;
 		}
-		else 
+		else
 			$data['tariff_kvt']=$_POST['tariff'];
 		$data['tariff_value']=$_POST['tariff_value'];
 		$data['tariff_count']=$_POST['tariff_count'];
 		$data['data_schet']=$_POST['data_schet'];
-		
-		
+
+
 		$this->load->view("reports/schetoplata",$data);
 	}
 	function akt()
@@ -1236,7 +1236,7 @@ class Billing extends Controller
 	}
 	function adding_akt()
 	{
-		
+
 		$_POST['tariff_value']=4;
 		$this->db->insert("industry.akt",$_POST);
 		redirect("billing/values_sets/".$_POST['values_set_id']);
@@ -1263,20 +1263,20 @@ class Billing extends Controller
 	{
 		$sql="SELECT firm_id from industry.firmid_by_values_set where values_set_id=".$_POST['values_set_id'];
 		$w=$this->db->query($sql)->row()->firm_id;
-		
+
 		$this->session->set_userdata(array('day'=>$_POST['day'],'month'=>$_POST['month'],'year'=>$_POST['year']));
 		$data=$_POST['year']."-".$_POST['month']."-".$_POST['day'];
-		if (!checkdate($_POST['month'],$_POST['day'],$_POST['year'])) 
-		{			
+		if (!checkdate($_POST['month'],$_POST['day'],$_POST['year']))
+		{
 			redirect("billing/edit_pokaz/".$w);
-		}		
+		}
 		$_POST['data']=date("Y-m-d", mktime(0,0,0,$_POST['month'],$_POST['day'],$_POST['year']));
 		unset($_POST['year']);
 		unset($_POST['day']);
-		unset($_POST['month']);	
+		unset($_POST['month']);
 		$_POST['uroven'] = 0;
 		$this->db->insert("industry.counter_value",$_POST);
-		
+
 		redirect("billing/edit_pokaz/$w#".($this->uri->segment(3)+1));
 	}
 	//! Отчеты
@@ -1286,7 +1286,7 @@ class Billing extends Controller
 		$this->load->view("reports");
 		$this->load->view("right");
 	}
-	
+
 	function doljniki_za_period_form()
 	{
 		$sql="SELECT * from industry.period order by id";
@@ -1296,7 +1296,7 @@ class Billing extends Controller
 		$this->load->view("reports/form/doljniki_za_period",$data);
 		$this->load->view("right");
 	}
-	
+
 	function doljniki_za_period()
 	{
 		$data['org_info']=$this->db->get("industry.org_info")->row();
@@ -1328,10 +1328,10 @@ class Billing extends Controller
 			$name=$this->db->get("industry.ture")->row()->name;
 			$data['ture']=" <br>по ТУРЭ $name";
 		}
-		$data['sql_result']=$this->db->query($sql);		
+		$data['sql_result']=$this->db->query($sql);
 		$this->load->view("reports/doljniki_za_period",$data);
 	}
-	
+
 	function vih_7_re_form()
 	{
 		$sql="SELECT * from industry.period order by id";
@@ -1368,12 +1368,12 @@ class Billing extends Controller
 			$name=$this->db->get("industry.ture")->row()->name;
 			$data['ture']=" <br>по ТУРЭ $name";
 		}
-		$data['sql_result']=$this->db->query($sql);		
+		$data['sql_result']=$this->db->query($sql);
 		$this->load->view("reports/7-re",$data);
 	}
 	function vih_2_re()
 	{
-		
+
 		$data['org_info']=$this->db->get("industry.org_info")->row();
 		$sql='select * from industry.period where id='.$_POST['period_id'];
 		$data['period']=$this->db->query($sql)->row();
@@ -1390,7 +1390,7 @@ class Billing extends Controller
 			$data['ture']=NULL;
 			$this->db->where('period_id',$_POST['period_id']);
 			$data['sql_result']=$this->db->get("industry.\"2-re\"");
-		}		
+		}
 		$this->load->view("reports/2-re",$data);
 	}
 	function vih_2_re_form()
@@ -1407,7 +1407,7 @@ class Billing extends Controller
 	{
 		$sql='select * from industry.analiz_of_change_debet_kredit where period_id=4';
 		$data['analiz']=$this->db->query($sql)->result();
-		$this->load->view('reports/analiz_of_change_debet_kredit',$data);	
+		$this->load->view('reports/analiz_of_change_debet_kredit',$data);
 	}
 	function rashod_electro ()
 	{
@@ -1421,7 +1421,7 @@ class Billing extends Controller
 	{
 		$sql="select * from industry.counters_by_type where counter_data_finish is null order by counter_type_id,ture_id,dogovor";
 		$data['counters']=$this->db->query($sql);
-		$this->load->view('reports/counters_by_type',$data);		
+		$this->load->view('reports/counters_by_type',$data);
 	}
 	function reported_firms_form()
 	{
@@ -1456,10 +1456,10 @@ class Billing extends Controller
 		$this->db->where("dolg::numeric(24,2)>",0);
 		$this->db->where("firm_ture_id",$_POST['ture_id']);
 		$data['firms']=$this->db->get('industry.dolgi');
-		
+
 		$this->db->where("id",$_POST['ture_id']);
 		$data['ture']=$this->db->get('industry.ture')->row();
-		
+
 		$this->load->view('reports/dolgi',$data);
 	}
 	function pre_subabonent()
@@ -1478,10 +1478,10 @@ class Billing extends Controller
 		if ($_POST['ture_id']!=-1)
 			$this->db->where('ture_id',$_POST['ture_id']);
 		$data['firms']=$this->db->get('industry.subabonent');
-		
+
 		$this->load->view('reports/subabonent',$data);
 	}
-	
+
 	function pre_snyatie_counter_value()
 	{
 		$this->db->order_by("id");
@@ -1499,7 +1499,7 @@ class Billing extends Controller
 		$this->load->view('reports/snyatie_counter_value',$data);
 	}
 	function pre_list_of_firms()
-	{		
+	{
 		$data['users']=$this->db->get("industry.user");
 		$this->left();
 		$this->load->view("pre_list_of_firms",$data);
@@ -1507,11 +1507,11 @@ class Billing extends Controller
 	}
 	function list_of_firms()
 	{
-		if ($_POST['user_id']!=-1) 
+		if ($_POST['user_id']!=-1)
 			$this->db->where("user_id",$_POST['user_id']);
-		
+
 		$data['firms']=$this->db->get("industry.list_of_firms");
-		
+
 		$this->load->view('reports/list_of_firms',$data);
 	}
 	function user_list()
@@ -1542,7 +1542,7 @@ class Billing extends Controller
 		$sql="select industry.delete_counter(".$this->uri->segment(3).") as is_deleted;";
 		$is_deleted=$this->db->query($sql)->row()->is_deleted;
 		$this->session->set_flashdata('is_deleted', $is_deleted);
-		redirect("billing/point/".$point_id);		
+		redirect("billing/point/".$point_id);
 	}
 	function delete_billing_point()
 	{
@@ -1557,9 +1557,9 @@ class Billing extends Controller
 			$sql="delete from industry.billing_point where id=".$this->uri->segment(3);
 			$this->db->query($sql);
 		}
-		
+
 		$this->session->set_flashdata('is_deleted',$count);
-		redirect("billing/firm/".$firm_id);		 
+		redirect("billing/firm/".$firm_id);
 	}
 	function edit_billing_point()
 	{
@@ -1582,19 +1582,19 @@ class Billing extends Controller
 	function edit_permission()
 	{
 		$sql="select * from industry.user where id=".$this->uri->segment(3);
-		$data['perm']=$this->db->query($sql)->row_array();		
+		$data['perm']=$this->db->query($sql)->row_array();
 		$this->left();
 		$this->load->view('edit_permission',$data);
 		$this->load->view("right");
-	}	
+	}
 	function edition_permission()
 	{
 		$sql="select * from industry.user where id=".$_POST['id'];
-		$perm=$this->db->query($sql)->row_array();		
-		$this->db->where('id', $_POST['id']);		
+		$perm=$this->db->query($sql)->row_array();
+		$this->db->where('id', $_POST['id']);
 		unset( $perm['id'] );
-		unset( $perm['password'] );		
-		foreach ($perm as $key => $_f) 
+		unset( $perm['password'] );
+		foreach ($perm as $key => $_f)
 		{
 			if (($key!='name') and ($key!='login') and ($key!='profa'))
 			{
@@ -1620,47 +1620,47 @@ class Billing extends Controller
 		$period=$this->db->query("select * from industry.period where 
 			id in 	(select value::integer from industry.sprav	where name='current_period')")->row();
 		$sql="";
-		set_time_limit(0);		
+		set_time_limit(0);
 		$db = dbase_open("c:/oplata/OPLATA.dbf", 0);
-		
+
 		if ($db)
-		{			
+		{
 			for ($i=1;$i<dbase_numrecords($db)+1;$i++)
 			{
 				$rec=dbase_get_record_with_names($db,$i);
-				
+
 				$year=substr($rec['DATA'],0,4);
 				$month=substr($rec['DATA'],4,2);
 				$day=substr($rec['DATA'],6,2);
-				
+
 				$data=mktime(0,0,0,$month,$day,$year);
 				$data=date("Y-m-d",$data);
 				if (($data>= $period->begin_date)and($data<=$period->end_date))
 				{
 					$rec['DATA']=$this->to_date($rec['DATA']);
 					$rec['DATA_V']=$this->to_date($rec['DATA_V']);
-					
+
 					if (strlen(trim($rec['VO']))==0) $rec['VO']=0;
-					
+
 						$sql.="\nINSERT INTO industry.oplata_buf(
 					 data, un_nom, nomer1c, data_v, n_dokum, sum, schet, vo) values 
 					 ('{$rec['DATA']}',{$rec['UN_NOM']},{$rec['DOG']},
 					 '{$rec['DATA_V']}',{$rec['N_DOKUM']},{$rec['SUM']},
 					 '{$rec['SCHET']}',{$rec['VO']});\n";
-				}				
+				}
 			}
 			dbase_close($db);
-			
+
 			$this->db->query($sql);
-			
+
 			$d["d"]=$this->db->get('industry.oplata_unknown_dogovor');
 			$d["s"]=$this->db->get('industry.oplata_unknown_schet');
 			$this->load->view("oplata/import",$d);
 		}
-		else 
-			echo "База не открыта";		
+		else
+			echo "База не открыта";
 	}
-	
+
 	function oplata_import()
 	{
 		$this->db->query(
@@ -1707,10 +1707,10 @@ class Billing extends Controller
 		#$this->db->query("select * from industry.load_oplata()");
 		redirect ("billing");
 	}
-	
+
 	function jpeg()
 	{
-		
+
 	}
 	function gd_info()
 	{
@@ -1745,19 +1745,19 @@ class Billing extends Controller
 		if ($count>0)
 		{
 			if ($_POST['new_pass_1']==$_POST['new_pass_2'])
-			{			
+			{
 				$this->db->where('id',$this->session->userdata('id'));
 				$this->db->update('industry.user',array('password'=>md5($_POST['new_pass_1'])));
 				$this->session->set_flashdata('ischanged','yes');
 			}
-			else 
+			else
 			$this->session->set_flashdata('ischanged','not_ident');
-		} 
-		else $this->session->set_flashdata('ischanged','old_pass_error');		
+		}
+		else $this->session->set_flashdata('ischanged','old_pass_error');
 		redirect('billing/change_password');
 	}
 	// работа с оплатой
-	
+
 	function org_info()
 	{
 		$this->left();
@@ -1783,8 +1783,8 @@ class Billing extends Controller
 		$data['oplata_info']=$this->db->query($sql);
 		$this->load->view('reports/oplata_info',$data);
 	}
-	
-	
+
+
 	function oplata()
 	{
 		if ($this->session->userdata('begin_data')=="")
@@ -1795,13 +1795,13 @@ class Billing extends Controller
 			$period=$this->db->query($sql)->row();
 			$this->session->set_userdata(array('begin_data'=>$period->begin_date,'end_data'=>$period->end_date));
 		}
-		
+
 		/*FINE*/
 		$this->db->where('data >= ', $this->session->userdata('begin_data'));
 		$this->db->where('data <= ', $this->session->userdata('end_data'));
 		$data['fine_oplata'] = $this->db->get("industry.fine_oplata_edit")->result();
-		/*END FINE*/		
-		
+		/*END FINE*/
+
 		$sql="select * from industry.oplata_edit where data between '".$this->session->userdata('begin_data')."' and '".$this->session->userdata('end_data')."'";
 		$data['oplata']=$this->db->query($sql);
 		$this->load->view('oplata/index',$data);
@@ -1819,7 +1819,7 @@ class Billing extends Controller
 								'{$_POST['end']}'";
 					$data['oplata']=$this->db->query($sql);
 				}
-		
+
 		$this->load->view("oplata/po_schetam",$data);
 	}
 	function pre_platejnye_dokumenty()
@@ -1863,14 +1863,14 @@ class Billing extends Controller
 		$this->session->set_userdata($_POST);
 		redirect('billing/oplata');
 	}
-	
+
 	/*
 	function adding_oplata()
 	{
 
 		$sql="select count(*) from industry.firm where dogovor=".$_POST['dogovor'];
 		$count=$this->db->query($sql)->row()->count;
-		
+
 		$sql="select id,name from industry.firm where dogovor=".$_POST['dogovor'];
 		$query=$this->db->query($sql);
 		if ($count>0)
@@ -1890,7 +1890,7 @@ class Billing extends Controller
 				$this->session->set_userdata(
 					array( 	'data'			=>	$_POST['data'],
 						'number'	=>	$_POST['payment_number']
-					        ) 
+					        )
 				);
 				$data['value']=$_POST['value']/1.12;
 				$data['data']=$_POST['data'];
@@ -1937,7 +1937,7 @@ class Billing extends Controller
 
                 #деление оплаты начислений и пени
                 $firm_fine_saldo = $this->db->query(
-                    "select 
+                    "select
                       (fine_saldo.value - coalesce(sum(fine_oplata.value*((100+fine_oplata.nds)/100)),0)) as itogo_saldo
                     from industry.fine_saldo
                     join industry.period on period.id = fine_saldo.period_id
@@ -2024,7 +2024,7 @@ class Billing extends Controller
         }
         redirect('billing/oplata');
     }
-	
+
 	function pre_svod_po_tp()
 	{
 		$data['ture']=$this->db->get("industry.ture");
@@ -2035,15 +2035,15 @@ class Billing extends Controller
 	}
 	function svod_po_tp()
 	{
-		
+
 		$this->load->library("pdf/pdf");
-		
+
 		$this->pdf->SetSubject('TCPDF Tutorial');
         $this->pdf->SetKeywords('TCPDF, PDF, example, test, guide');
         $this->pdf->SetAutoPageBreak(TRUE);
         // set font
         $this->pdf->SetFont('dejavusans', '', 7);
-        
+
         // add a page
         $this->pdf->AddPage();
 		$this->db->where('id',$_POST['period_id']);
@@ -2054,33 +2054,33 @@ class Billing extends Controller
 		$this->db->where('id',$_POST['ture_id']);
 		$data['ture_name']=$this->db->get('industry.ture')->row()->name;
 		$string=$this->load->view("reports/svod_po_tp",$data,TRUE);
-		
+
         $this->pdf->writeHTML($string);
-        
+
         //Close and output PDF document
-        $this->pdf->Output('example_001.pdf', 'I'); 
+        $this->pdf->Output('example_001.pdf', 'I');
 	}
 	function graph_test()
 	{
-		
+
 		$this->load->library("pdf/pdf");
-		
+
 		$this->pdf->SetSubject('TCPDF Tutorial');
         $this->pdf->SetKeywords('TCPDF, PDF, example, test, guide');
         $this->pdf->SetAutoPageBreak(TRUE);
         // set font
         $this->pdf->SetFont('dejavusans', '', 7);
-        
+
         // add a page
         $this->pdf->AddPage();
-		
+
 		$data['1']=23;
 		$string=$this->load->view("reports/graph_test",$data,TRUE);
-		
+
         $this->pdf->writeHTML($string);
-        
+
         //Close and output PDF document
-        $this->pdf->Output('example_001.pdf', 'I'); 
+        $this->pdf->Output('example_001.pdf', 'I');
 	}
 	function pre_multi_tariff_count()
 	{
@@ -2102,7 +2102,7 @@ class Billing extends Controller
 		}else{
 			$data['nado']='false';
 		}
-		
+
 		//! ТОО
 		$sql_too="select * from industry.multi_tariff_count where 
    firm_id not in (
@@ -2114,8 +2114,8 @@ class Billing extends Controller
    )    and is_too=true and firm_group_id<>21";
    if ($_POST['ture_id']!=-1) {	$sql_too.=" and ture_id=".$_POST['ture_id']; }
 		$data['too']=$this->db->query($sql_too);
-		
-	//	$this->db->where('firm_group_id<>21',NULL,false);	
+
+	//	$this->db->where('firm_group_id<>21',NULL,false);
 	//	$this->db->where('is_too','true');
 	//	$data['too']=$this->db->get("industry.multi_tariff_count");
 		//! Субабоненты
@@ -2129,8 +2129,8 @@ class Billing extends Controller
    )    ";
    if ($_POST['ture_id']!=-1) {	$sql.=" and ture_id=".$_POST['ture_id']; }
 		$data['sub']=$this->db->query($sql);
-		
-		//! Гос 
+
+		//! Гос
 		$sql_gos="select * from industry.multi_tariff_count where 
    firm_id  not in (
    select billing_point.firm_id from industry.sovm_by_counter_value  
@@ -2139,11 +2139,11 @@ class Billing extends Controller
 	left join industry.sprav on sprav.name='current_period'
 	where sovm_by_counter_value.period_id=sprav.value::integer
    )   and  firm_group_id=21  ";
-   
+
    if ($_POST['ture_id']!=-1) {	$sql_gos.=" and  ture_id=".$_POST['ture_id']; }
-   
+
 		$data['gos']=$this->db->query($sql_gos);
-		
+
 		//! ИП
 	$sql_ip="select * from industry.multi_tariff_count where 
    firm_id  not in (
@@ -2153,11 +2153,11 @@ class Billing extends Controller
 	left join industry.sprav on sprav.name='current_period'
 	where sovm_by_counter_value.period_id=sprav.value::integer
    )   and  firm_group_id<>21 and is_ip=true ";
-   
+
    if ($_POST['ture_id']!=-1) {	$sql_ip.=" and  ture_id=".$_POST['ture_id']; }
-   
+
 	$data['ip']=$this->db->query($sql_ip);
-	
+
 	//! Прочие
 		$sql_last="select * from industry.multi_tariff_count where 
    firm_id not in (
@@ -2169,9 +2169,9 @@ class Billing extends Controller
    )    and is_too=false and is_ip=false and firm_group_id<>21";
    if ($_POST['ture_id']!=-1) {	$sql_last.=" and ture_id=".$_POST['ture_id']; }
 		$data['last_firm']=$this->db->query($sql_last);
-	
-	//! Конец заполнения данных 	
-		
+
+	//! Конец заполнения данных
+
 	$data['_POST']=$_POST;
 	$this->load->view('reports/multi_tariff_count',$data);
 	}
@@ -2185,25 +2185,25 @@ class Billing extends Controller
 	function svod_saldo_po_ture()
 	{
 		$this->load->library("pdf/pdf");
-		
-		
+
+
 		$data['period_name']=$this->db->query("select industry.current_period() as current_period")->row();
 		$this->db->where('period_id',$_POST['period_id']);
 		$data['ture']=$this->db->get('industry.svod_saldo_po_ture');
 		$string=$this->load->view("reports/svod_saldo_po_ture",$data,TRUE);
-		
+
 		$this->pdf->SetSubject('TCPDF Tutorial');
         $this->pdf->SetKeywords('TCPDF, PDF, example, test, guide');
-        
+
         // set font
         $this->pdf->SetFont('dejavusans', '', 10);
-        
+
         // add a page
         $this->pdf->AddPage();
         $this->pdf->writeHTML($string);
-        
+
         //Close and output PDF document
-        $this->pdf->Output('example_001.pdf', 'I'); 
+        $this->pdf->Output('example_001.pdf', 'I');
 	}
 	function pre_energo_24()
 	{
@@ -2266,7 +2266,7 @@ class Billing extends Controller
 		$data['period']=$this->db->get('industry.period')->row();
 		$this->db->where('period_id',$_POST['period_id']);
 		$this->db->where('firm_ture_id',$_POST['ture_id']);
-		
+
 		$data['oborotka']=$this->db->get("industry.oborotka_with_predoplata");
 		$this->load->view('reports/oborotka_with_predoplata',$data);
 	}
@@ -2300,7 +2300,7 @@ class Billing extends Controller
 		$data['period']=$this->db->get("industry.period");
 		$this->db->where('period_id',$_POST['period_id']);
 		if ($_POST['type']==2)
-			$this->db->where('is_too','TRUE');		
+			$this->db->where('is_too','TRUE');
 		if ($_POST['type']==3)
 			$this->db->where('is_too','FALSE');
 		if ($_POST['type']==2 or $_POST['type']==3)
@@ -2311,7 +2311,7 @@ class Billing extends Controller
 		{
 			$data['otpusk']=$this->db->get('industry.poleznyy_otpusk');
 		}
-		
+
 		$this->load->view('reports/poleznyy_otpusk',$data);
 	}
 	function copy_user()
@@ -2339,7 +2339,7 @@ class Billing extends Controller
 	{
 		$this->db->query("select industry.goto_next_period_fine();");
 		$array = array(1 => 'Переход в следующий месяц прошел успешно!');
-		$this->session->set_flashdata('success', $array);		
+		$this->session->set_flashdata('success', $array);
 		redirect("billing");
 	}
 	function oplata_delete()
@@ -2354,14 +2354,14 @@ class Billing extends Controller
 		$data['period_name']=$this->db->query("select industry.current_period() as current_period")->row();
 		$this->load->view("reports/statisticheskiy_otchet",$data);
 	}
-	
+
 	function statisticheskiy_otchet_new()
 	{
 		$data['otchet']=$this->db->get("industry.stat_otchet_new");
 		$data['period_name']=$this->db->query("select industry.current_period() as current_period")->row();
 		$this->load->view("reports/stat_otchet",$data);
 	}
-	
+
 	function billing_point_info()
 	{
 		$this->db->where('id',$this->uri->segment(3));
@@ -2370,13 +2370,13 @@ class Billing extends Controller
 		$data['info']=$this->db->get("industry.billing_point_info");
 		$this->load->view("reports/billing_point_info",$data);
 	}
-	
+
 	function billing_point_info_all()
 	{
 		$data['info']=$this->db->get("industry.billing_point_info_all");
 		$this->load->view("reports/billing_point_info_all",$data);
 	}
-	
+
 	function pre_oborotno_svodnaya_vedomost()
 	{
 		$data['period']=$this->db->get("industry.period");
@@ -2390,7 +2390,7 @@ class Billing extends Controller
 		$data['period_name']=$this->db->get('industry.period')->row()->name;
 		$this->db->where("period_id",$_POST['period_id']);
 		$data['oborotka']=$this->db->get("industry.oborotno_svodnaya_vedomost");
-		$this->load->view("reports/oborotno_svodnaya_vedomost",$data);	
+		$this->load->view("reports/oborotno_svodnaya_vedomost",$data);
 	}
 	function pre_diff_tariff_controll()
 	{
@@ -2438,7 +2438,7 @@ class Billing extends Controller
 		$data['period']=$this->db->get("industry.period")->row();
 		$data['org']=$this->db->get("industry.org_info")->row();
 		$this->db->where("period_id",$_POST['period_id']);
-		
+
 		$data['diff']=$this->db->get("industry.diff_tariff_controll_3");
 		$this->load->view("reports/diff_tariff_controll_3",$data);
 	}
@@ -2465,19 +2465,19 @@ class Billing extends Controller
 	function nachislenie_v_buhgalteriu()
 	{
 		$nach = $this->db->query("select *from industry.nachislenie_v_buhgalteriu union all select * from industry.nach_fine  order by \"NOMERSCHET\", \"NPENI\"");
-	
+
 		set_time_limit(0);
 		$db = dbase_open("c:/oplata/nach2.dbf", 2);
-		
+
 		if ($db)
-		{			
+		{
 			for ($i=1;$i<dbase_numrecords($db)+1;$i++)
 			{
-				dbase_delete_record($db, $i);	
+				dbase_delete_record($db, $i);
 			}
 			dbase_pack($db);
 			dbase_close($db);
-			
+
 			$db2 = dbase_open("c:/oplata/nach2.dbf", 2);
 			foreach ($nach->result() as $n)
 			{
@@ -2487,11 +2487,11 @@ class Billing extends Controller
 						$n->NAIM,			$n->DOG,$n->NACH,$n->NACH_SUM,$n->NACH_NDS, $n->KVT, $n->NOMERSCHET, $n->KONDATA,$n->NPENI
 					));
 			}
-			
-			dbase_close($db2);			
+
+			dbase_close($db2);
 		}
-		else 
-			echo "База не открыта";		
+		else
+			echo "База не открыта";
 	}
 	function pre_nachislenie_v_analiz()
 	{
@@ -2505,19 +2505,19 @@ class Billing extends Controller
 	{
 		$this->db->where("period_id",$_POST['period_id']);
 		$nach=$this->db->get("industry.analiz_po_tp");
-		
+
 		set_time_limit(0);
 		$db = dbase_open("c:/oplata/anal_tp.dbf", 2);
-		
+
 		if ($db)
-		{			
+		{
 			for ($i=1;$i<dbase_numrecords($db)+1;$i++)
 			{
-				dbase_delete_record($db, $i);	
+				dbase_delete_record($db, $i);
 			}
 			dbase_pack($db);
 			dbase_close($db);
-			
+
 			$db2 = dbase_open("c:/oplata/anal_tp.dbf", 2);
 			foreach ($nach->result() as $n)
 			{
@@ -2529,10 +2529,10 @@ class Billing extends Controller
 						)
 					);
 			}
-			
-			dbase_close($db2);			
+
+			dbase_close($db2);
 		}
-		else 
+		else
 			echo "База не открыта";
 		redirect ("billing");
 	}
@@ -2540,11 +2540,11 @@ class Billing extends Controller
 	{
 		$sql="SELECT value::integer as current_period FROM industry.sprav WHERE name='current_period'";
 		$data['current_period']=$this->db->query($sql)->row()->current_period;
-		
+
 		$this->db->order_by("id");
 		$data['period']=$this->db->get("industry.period");
 		$data['firm_id']=$this->uri->segment(3);
-		$this->left();		
+		$this->left();
 		$this->load->view('pre_graph',$data);
 		$this->load->view('right');
 	}
@@ -2579,7 +2579,7 @@ class Billing extends Controller
 		$ei=$_POST["finish_period_id"];
 		$first=1;
 		$sql="select * from industry.graph where firm_id ={$this->uri->segment(3)} and period_id between $fi and $ei";
-		
+
 		$this->db->where("id",$this->uri->segment(3));
 		$data['firm_info']=$this->db->get("industry.firm")->row();
 		$res=$this->db->query($sql);
@@ -2602,8 +2602,8 @@ class Billing extends Controller
 				$i.=', '.$this->f_d_graph($p->itogo_kvt);
 			}
 		}
-		
-		
+
+
 		$data['periods']=$periods;
 		$data['itogo_kvt']=$i;
 		$data['numbers']=$this->closer_number($max);
@@ -2669,15 +2669,15 @@ class Billing extends Controller
 		}
 		$this->load->view("reports/ne_potrebil",$data);
 	}
-	
+
 	function docs()
 	{
 		$this->db->order_by("name");
 		$data['query']=$this->db->get("industry.docs");
 		$this->left();
-		$this->load->view("sprav/docs_view",$data);	
+		$this->load->view("sprav/docs_view",$data);
 		$this->load->view("right");
-		
+
 	}
 	function docs_edit()
 	{
@@ -2699,7 +2699,7 @@ class Billing extends Controller
 		$this->db->insert('industry.docs',$_POST);
 		redirect("billing/docs");
 	}
-	
+
 	function docs_register(){
 		$data['docs']= $this->db->get('industry.docs');
 		$data['firm_id']=$this->uri->segment(3);
@@ -2712,7 +2712,7 @@ class Billing extends Controller
 		$this->load->view("docs_register",$data);
 		$this->load->view("right");
 	}
-	
+
 	function docs_register_form(){
 	$firm_id = $_POST['firm_id'];
 	unset($_POST['firm_id']);
@@ -2734,7 +2734,7 @@ class Billing extends Controller
 	 }
 	 redirect("billing/docs_register/".$firm_id);
 	}
-	
+
 	function pre_ip_obshiy()
 	{
 		$data['period']=$this->db->get("industry.period");
@@ -2742,7 +2742,7 @@ class Billing extends Controller
 		$this->load->view('pre_ip_obshiy',$data);
 		$this->load->view('right');
 	}
-	
+
 	function ip_obshiy()
 	{
 		$this->db->where("id",$_POST['period_id']);
@@ -2751,7 +2751,7 @@ class Billing extends Controller
 		$data['ip']=$this->db->get("industry.ip_obshiy_tar");
 		$this->load->view("reports/ip_obshiy",$data);
 	}
-	
+
 	function pre_analiz_mnogourovneviy_spisok()
 	{
 		$data['period']=$this->db->get("industry.period");
@@ -2759,7 +2759,7 @@ class Billing extends Controller
 		$this->load->view('pre_analiz_mnogourovneviy_spisok',$data);
 		$this->load->view('right');
 	}
-	
+
 	function analiz_mnogourovneviy_spisok()
 	{
 		$this->db->where("id",$_POST['period_id']);
@@ -2769,7 +2769,7 @@ class Billing extends Controller
 		$data['diff']=$this->db->get("industry.analiz_mnogourovneviy_spisok");
 		$this->load->view("reports/analiz_mnogourovneviy_spisok",$data);
 	}
-	
+
 	function pre_analiz_mnogourovneviy()
 	{
 		$data['period']=$this->db->get("industry.period");
@@ -2777,7 +2777,7 @@ class Billing extends Controller
 		$this->load->view('pre_analiz_mnogourovneviy',$data);
 		$this->load->view('right');
 	}
-	
+
 	function analiz_mnogourovneviy()
 	{
 		$this->db->where("id",$_POST['period_id']);
@@ -2787,7 +2787,7 @@ class Billing extends Controller
 		$data['diff']=$this->db->get("industry.analiz_mnogourovneviy");
 		$this->load->view("reports/analiz_mnogourovneviy",$data);
 	}
-	
+
 	function pre_analiz_diff_tarif()
 	{
 		$data['period']=$this->db->get("industry.period");
@@ -2795,7 +2795,7 @@ class Billing extends Controller
 		$this->load->view('pre_analiz_diff_tarif',$data);
 		$this->load->view('right');
 	}
-	
+
 	function analiz_diff_tarif()
 	{
 		$this->db->where("id",$_POST['period_id']);
@@ -2805,7 +2805,7 @@ class Billing extends Controller
 		$data['diff']=$this->db->get("industry.analiz_diff_tarif");
 		$this->load->view("reports/analiz_diff_tarif",$data);
 	}
-	
+
 	function pre_analiz_diff_tarif_spisok()
 	{
 		$data['period']=$this->db->get("industry.period");
@@ -2813,8 +2813,8 @@ class Billing extends Controller
 		$this->load->view('pre_analiz_diff_tarif_spisok',$data);
 		$this->load->view('right');
 	}
-	
-	
+
+
 	function analiz_diff_tarif_spisok()
 	{
 		$this->db->where("id",$_POST['period_id']);
@@ -2824,7 +2824,7 @@ class Billing extends Controller
 		$data['diff']=$this->db->get("industry.analiz_diff_tarif_spisok");
 		$this->load->view("reports/analiz_diff_tarif_spisok",$data);
 	}
-	
+
 		function pre_analiz_100750()
 	{
 		$data['period']=$this->db->get("industry.period");
@@ -2832,8 +2832,8 @@ class Billing extends Controller
 		$this->load->view('pre_analiz_100750',$data);
 		$this->load->view('right');
 	}
-	
-	
+
+
 	function analiz_100750()
 	{
 		$this->db->where("id",$_POST['period_id']);
@@ -2843,7 +2843,7 @@ class Billing extends Controller
 		$data['diff']=$this->db->get("industry.analiz_diff_tarif_spisok");
 		$this->load->view("reports/analiz_100750",$data);
 	}
-	
+
 	function pre_akt_snyatiya_pokazaniy()
 	{
 		$this->db->order_by('id');
@@ -2852,7 +2852,7 @@ class Billing extends Controller
 		$this->load->view("pre_akt_snyatiya_pokazaniy",$data);
 		$this->load->view("right");
 	}
-	
+
 	function akt_snyatiya_pokazaniy()
 	{
 		$this->db->where("id",$_POST['period_id']);
@@ -2862,10 +2862,10 @@ class Billing extends Controller
 		$data['vedomost']=$this->db->get('industry.akt_snyatiya_pokazaniy');
 		$this->load->view("reports/akt_snyatiya_pokazaniy",$data);
 		}
-	
-	
-	
-	
+
+
+
+
 	function pre_svod()
 	{
 		$this->db->order_by('id');
@@ -2880,7 +2880,7 @@ class Billing extends Controller
 		if ($_POST["type"]==2) $where=" where firm.is_too=true and (firm.subgroup_id<6 or firm.subgroup_id>9) ";
 		if ($_POST["type"]==3) $where=" where firm.is_ip=true ";
 		if ($_POST["type"]==4) $where=" where firm.subgroup_id>=6 and firm.subgroup_id<=9 ";
-		
+
 		$sql="";
 		$params='firm.name as firm_name ';
 		$php='echo "<tr><td>".$j++."</td><td>".$r->dogovor."</td><td align=left>".$r->firm_name."</td><td>".$r->subgroup."</td>";';
@@ -2902,8 +2902,8 @@ class Billing extends Controller
 		$data['period_head']=$period_head;
 		$this->load->view("reports/svod",$data);
 	}
-	
-	
+
+
 	function pre_svod_750()
 	{
 		$this->db->order_by('id');
@@ -2918,7 +2918,7 @@ class Billing extends Controller
 		if ($_POST["type"]==2) $where=" where firm.is_too=true and (firm.subgroup_id<6 or firm.subgroup_id>9) ";
 		if ($_POST["type"]==3) $where=" where firm.is_ip=true ";
 		if ($_POST["type"]==4) $where=" where firm.subgroup_id>=6 and firm.subgroup_id<=9 ";
-		
+
 		$sql="";
 		$params='firm.name as firm_name ';
 		$php='echo "<tr><td>".$j++."</td><td>".$r->dogovor."</td><td align=left>".$r->firm_name."</td><td>".$r->subgroup."</td>";';
@@ -2931,7 +2931,7 @@ class Billing extends Controller
 				on $tablename.period_id=$j and $tablename.firm_id=firm.id ";
 			$params.=", coalesce($tablename.itogo_kvt,0) as $columnname ";
 			$php.='echo "<td><table border=0px><tr><td align=right>".dottozpt($r->col_'.$j.')."</td></tr>";';
-			
+
 			$php.='echo "<tr><td align=right>".dottozpt(($r->col_'.$j.')/(24000))."</td></tr></table></td>";';
 			$this->db->where('id',$j);
 			$period_head.="<td colspan=2>".$this->db->get('industry.period')->row()->name."</td>";
@@ -2942,7 +2942,7 @@ class Billing extends Controller
 		$data['period_head']=$period_head;
 		$this->load->view("reports/svod_750",$data);
 	}
-	
+
 	function add_akt_with_tariff(){
 		$this->left();
 		$data['firm_id']=$this->uri->segment(3);
@@ -2966,7 +2966,7 @@ where akt_with_tariff.data between period.begin_date and period.end_date and fir
 		$data['akts']=$this->db->query($sql);
 		 $sql="select * from industry.billing_point where firm_id=".$this->uri->segment(3);
 		 $data['points']=$this->db->query($sql);
-		 
+
 		$sql="select tariff.id as tariff_id,
 tariff.name ||' '||tariff_period.data||' '||value as name,
 value
@@ -2983,7 +2983,7 @@ where firm_id={$this->uri->segment(3)} and data_finish is null";
 		$this->load->view("right");
 	}
 	function adding_akt_with_tariff()
-	{	
+	{
 		$ex=explode("|",$_POST['tariff']);
 		$array = array ('kvt'=>$_POST['kvt'],'data'=>$_POST['data'],'counter_id'=>$_POST['counter_id'],'tariff_id'=>$ex[0],'tariff_value'=>$ex[1]);
 		$this->db->insert('industry.akt_with_tariff',$array);
@@ -2995,7 +2995,7 @@ where firm_id={$this->uri->segment(3)} and data_finish is null";
 		$this->db->query($sql);
 		redirect("billing/add_akt_with_tariff/".$this->uri->segment(3));
 	}
-	
+
 	function pre_holostoy_hod()
 	{
 		$data['period']=$this->db->get("industry.period");
@@ -3003,21 +3003,21 @@ where firm_id={$this->uri->segment(3)} and data_finish is null";
 		$this->load->view('pre_holostoy_hod',$data);
 		$this->load->view('right');
 	}
-	
+
 	function holostoy_hod()
 	{
 	$sql = "SELECT * FROM industry.holostoy_hod where period_id=".$_POST['period_id'];
 		$data['hol']=$this->db->query($sql);
 		$this->load->view("reports/holostoy_hod",$data);
 	}
-	
+
 	function dispetcherskaya()
 	{
 		$sql = "SELECT * FROM industry.dispetcherskaya";
 		$data['disp']=$this->db->query($sql);
 		$this->load->view("dispetcherskaya",$data);
 	}
-	
+
 		/*FINE*/
     /*начальная страница по пене*/
     public function fine_info()
@@ -3572,14 +3572,14 @@ where firm_id={$this->uri->segment(3)} and data_finish is null";
 
         $this->load->view('fine/fine_2_re', $data);
     }
-	
+
 	function fine_oplata_delete()
     {
         $sql = "DELETE FROM industry.fine_oplata WHERE id=" . $this->uri->segment(3);
         $this->db->query($sql);
         redirect('billing/oplata');
-    }	
-	
+    }
+
 	/*ADD PERIODS*/
 	function add_periods()
 	{
@@ -3639,8 +3639,8 @@ where firm_id={$this->uri->segment(3)} and data_finish is null";
 		echo "added";
 		#redirect("billing/period");
 	}
-	
-	
+
+
 /*END ADD PERIODS*/
     function tariff_list()
     {
@@ -3746,6 +3746,38 @@ where firm_id={$this->uri->segment(3)} and data_finish is null";
         redirect("billing/tariff_list");
     }
 
+    public function unordered_oplata()
+    {
+        $this->db->where("period_id", $this->get_cpi());
+        $data['uo'] = $this->db->get("industry.unordered_oplata")->result();
+        $this->left();
+        $this->load->view("unordered_oplata/index", $data);
+        $this->load->view("right");
+    }
+
+    public function order_oplata()
+    {
+        $nomer1c = $this->uri->segment(3);
+        $this->db->where("nomer1c", $nomer1c);
+        $this->db->where("period_id", $this->get_cpi());
+        $data['uo'] = $this->db->get("industry.unordered_oplata_full")->result();
+        $dogs = array();
+        foreach ($data['uo'] as $item) {
+            $dogs[$item->dogovor] = $item->firm_id;
+        }
+        $data['dogs'] = $dogs;
+        $data['nomer1c'] = $nomer1c;
+        $this->left();
+        $this->load->view("unordered_oplata/order", $data);
+        $this->load->view("right");
+    }
+
+    public function change_oplata_ordering()
+    {
+        $this->db->where("id", $_POST['oplata_id']);
+        $this->db->update("industry.oplata", array('firm_id' => $_POST['firm_id']));
+        redirect("billing/order_oplata/{$_POST['nomer1c']}");
+    }
 
 }
 
