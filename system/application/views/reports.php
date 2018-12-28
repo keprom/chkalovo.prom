@@ -42,3 +42,4 @@ echo anchor("billing/pre_ip_obshiy","Частники, расчитывающи�
 <li><a href="<?php echo site_url('billing/pre_fine_2_re'); ?>"><?php echo '2-РЭ (пеня)'; ?></a></li>
 <li><a href="<?php echo site_url('billing/pre_fine_7_re'); ?>"><?php echo '7-РЭ (пеня)'; ?></a></li>
 <li><a href="<?php echo site_url('billing/unordered_oplata'); ?>"><?php echo 'Перекидывание оплат (освещение)'; ?></a></li>
+<li><a href="<?php echo site_url('billing/kontragent_rek'); ?>"><?php echo 'Список контрагентов с реквизитами'; ?></a></li>
